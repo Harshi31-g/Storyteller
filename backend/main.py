@@ -15,7 +15,7 @@ app = FastAPI(title="StoryShort API")
 # Configure CORS for Next.js frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://*.replit.dev", "https://*.replit.app"],
+    allow_origins=["http://localhost:3000", "http://localhost:5000", "https://*.replit.dev", "https://*.replit.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -65,7 +65,7 @@ async def generate_script(request: ScriptRequest):
         }
         
         payload = {
-            "model": "deepseek/deepseek-chat-v3.1:free",
+            "model": "deepseek/deepseek-chat",
             "messages": [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": request.prompt}
@@ -123,18 +123,18 @@ async def generate_audio(request: VideoRequest):
 @app.get("/api/random-media")
 async def get_random_media():
     """Get random selection of images and videos"""
-    # For now, return placeholder media paths
-    # In a real implementation, these would be actual media files
+    # Sample CC0 images from Unsplash/Pexels
     images = [
-        "/images/stock1.jpg",
-        "/images/stock2.jpg", 
-        "/images/stock3.jpg"
+        "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop",
+        "https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=1920&h=1080&fit=crop", 
+        "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=1920&h=1080&fit=crop"
     ]
     
+    # Sample CC0 videos from Pexels
     videos = [
-        "/videos/stock1.mp4",
-        "/videos/stock2.mp4",
-        "/videos/stock3.mp4"
+        "https://cdn.pixabay.com/vimeo/720459042/clouds-132348.mp4",
+        "https://cdn.pixabay.com/vimeo/720459041/ocean-132347.mp4",
+        "https://cdn.pixabay.com/vimeo/720459040/forest-132346.mp4"
     ]
     
     selected_media = {

@@ -18,6 +18,7 @@ import { useForm } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import { IconVideo, IconDownload, IconMicrophone, IconSparkles } from '@tabler/icons-react'
 import axios from 'axios'
+import { VideoPlayer } from './VideoPlayer'
 
 interface GeneratedVideo {
   script: string
@@ -50,7 +51,11 @@ export function VideoGenerator() {
     
     try {
       // Step 1: Generate script
-      const scriptResponse = await axios.post('http://localhost:8000/api/generate-script', {
+      const backendUrl = typeof window !== 'undefined' && window.location.hostname.includes('replit.dev')
+        ? `https://8000-${window.location.hostname.replace('3000-', '').replace('5000-', '')}`
+        : 'http://localhost:8000'
+      
+      const scriptResponse = await axios.post(`${backendUrl}/api/generate-script`, {
         prompt: values.prompt,
         length: values.length
       })
@@ -63,7 +68,7 @@ export function VideoGenerator() {
       setCurrentStep('Generating audio...')
 
       // Step 2: Generate audio
-      const audioResponse = await axios.post('http://localhost:8000/api/generate-audio', {
+      const audioResponse = await axios.post(`${backendUrl}/api/generate-audio`, {
         script: script,
         voice: values.voice
       })
@@ -75,7 +80,7 @@ export function VideoGenerator() {
       setCurrentStep('Selecting media...')
 
       // Step 3: Get random media
-      const mediaResponse = await axios.get('http://localhost:8000/api/random-media')
+      const mediaResponse = await axios.get(`${backendUrl}/api/random-media`)
 
       if (!mediaResponse.data.success) {
         throw new Error('Failed to get media')
@@ -196,57 +201,50 @@ export function VideoGenerator() {
       )}
 
       {generatedVideo && (
-        <Card shadow="md" padding="xl" radius="md">
-          <Stack gap="md">
-            <Group justify="space-between">
-              <Text size="lg" fw={600}>Generated Video</Text>
-              <ActionIcon
-                variant="filled"
-                color="green"
-                size="lg"
-                onClick={handleDownload}
-              >
-                <IconDownload size={16} />
-              </ActionIcon>
-            </Group>
-
-            <Box>
-              <Text size="sm" fw={500} mb="xs">Script:</Text>
-              <Text size="sm" c="dimmed" style={{ 
-                whiteSpace: 'pre-wrap', 
-                background: '#f8f9fa',
-                padding: '12px',
-                borderRadius: '8px'
-              }}>
-                {generatedVideo.script}
-              </Text>
-            </Box>
-
-            <Group>
-              <Text size="sm" c="dimmed">
-                Media: {generatedVideo.mediaPaths.image} + {generatedVideo.mediaPaths.video}
-              </Text>
-            </Group>
-
-            {generatedVideo.audioData && (
+        <Stack gap="md">
+          <VideoPlayer
+            script={generatedVideo.script}
+            audioData={generatedVideo.audioData}
+            imageSrc={generatedVideo.mediaPaths.image}
+            videoSrc={generatedVideo.mediaPaths.video}
+            onDownload={handleDownload}
+          />
+          
+          <Card shadow="md" padding="xl" radius="md">
+            <Stack gap="md">
+              <Text size="lg" fw={600}>Script Details</Text>
+              
               <Box>
-                <Text size="sm" fw={500} mb="xs">Generated Audio:</Text>
-                <audio 
-                  controls 
-                  src={`data:audio/mp3;base64,${generatedVideo.audioData}`}
-                  style={{ width: '100%' }}
-                />
+                <Text size="sm" fw={500} mb="xs">Generated Script:</Text>
+                <Text size="sm" c="dimmed" style={{ 
+                  whiteSpace: 'pre-wrap', 
+                  background: '#f8f9fa',
+                  padding: '12px',
+                  borderRadius: '8px'
+                }}>
+                  {generatedVideo.script}
+                </Text>
               </Box>
-            )}
 
-            <Alert color="blue" variant="light">
-              <Text size="sm">
-                Video composition with Remotion will be implemented next. 
-                For now, you can listen to the generated audio and see the script.
-              </Text>
-            </Alert>
-          </Stack>
-        </Card>
+              <Group>
+                <Text size="sm" c="dimmed">
+                  Selected Media: Image & Video from CC0 sources
+                </Text>
+              </Group>
+
+              {generatedVideo.audioData && (
+                <Box>
+                  <Text size="sm" fw={500} mb="xs">Generated Audio:</Text>
+                  <audio 
+                    controls 
+                    src={`data:audio/mp3;base64,${generatedVideo.audioData}`}
+                    style={{ width: '100%' }}
+                  />
+                </Box>
+              )}
+            </Stack>
+          </Card>
+        </Stack>
       )}
     </Stack>
   )
