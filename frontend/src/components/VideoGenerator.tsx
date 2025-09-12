@@ -51,9 +51,24 @@ export function VideoGenerator() {
     
     try {
       // Step 1: Generate script
-      const backendUrl = typeof window !== 'undefined' && window.location.hostname.includes('replit.dev')
-        ? `https://8000-${window.location.hostname.replace('3000-', '').replace('5000-', '')}`
-        : 'http://localhost:8000'
+      let backendUrl = 'http://localhost:8000'
+      
+      if (typeof window !== 'undefined' && window.location.hostname.includes('replit.dev')) {
+        // Extract the base domain from current hostname
+        const currentHost = window.location.hostname
+        if (currentHost.includes('-')) {
+          // For URLs like: https://5000-abc-123.user.replit.dev
+          // We want: https://8000-abc-123.user.replit.dev
+          const parts = currentHost.split('-')
+          if (parts.length >= 3) {
+            parts[0] = '8000' // Replace port with 8000
+            backendUrl = `https://${parts.join('-')}`
+          }
+        } else {
+          // Fallback: just prepend 8000-
+          backendUrl = `https://8000-${currentHost}`
+        }
+      }
       
       const scriptResponse = await axios.post(`${backendUrl}/api/generate-script`, {
         prompt: values.prompt,
