@@ -65,6 +65,33 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../src/app/api/generate-audio/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/generate-audio">> = Specific
+  const handler = {} as typeof import("../../src/app/api/generate-audio/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/api/generate-script/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/generate-script">> = Specific
+  const handler = {} as typeof import("../../src/app/api/generate-script/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/api/random-media/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/random-media">> = Specific
+  const handler = {} as typeof import("../../src/app/api/random-media/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 
 
 

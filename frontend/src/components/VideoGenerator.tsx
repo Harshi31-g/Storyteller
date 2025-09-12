@@ -50,27 +50,8 @@ export function VideoGenerator() {
     setCurrentStep('Generating script...')
     
     try {
-      // Step 1: Generate script
-      let backendUrl = 'http://localhost:8000'
-      
-      if (typeof window !== 'undefined' && window.location.hostname.includes('replit.dev')) {
-        // Extract the base domain from current hostname
-        const currentHost = window.location.hostname
-        if (currentHost.includes('-')) {
-          // For URLs like: https://5000-abc-123.user.replit.dev
-          // We want: https://8000-abc-123.user.replit.dev
-          const parts = currentHost.split('-')
-          if (parts.length >= 3) {
-            parts[0] = '8000' // Replace port with 8000
-            backendUrl = `https://${parts.join('-')}`
-          }
-        } else {
-          // Fallback: just prepend 8000-
-          backendUrl = `https://8000-${currentHost}`
-        }
-      }
-      
-      const scriptResponse = await axios.post(`${backendUrl}/api/generate-script`, {
+      // Step 1: Generate script - using local API route
+      const scriptResponse = await axios.post('/api/generate-script', {
         prompt: values.prompt,
         length: values.length
       })
@@ -82,8 +63,8 @@ export function VideoGenerator() {
       const script = scriptResponse.data.script
       setCurrentStep('Generating audio...')
 
-      // Step 2: Generate audio
-      const audioResponse = await axios.post(`${backendUrl}/api/generate-audio`, {
+      // Step 2: Generate audio - using local API route
+      const audioResponse = await axios.post('/api/generate-audio', {
         script: script,
         voice: values.voice
       })
@@ -94,8 +75,8 @@ export function VideoGenerator() {
 
       setCurrentStep('Selecting media...')
 
-      // Step 3: Get random media
-      const mediaResponse = await axios.get(`${backendUrl}/api/random-media`)
+      // Step 3: Get random media - using local API route
+      const mediaResponse = await axios.get('/api/random-media')
 
       if (!mediaResponse.data.success) {
         throw new Error('Failed to get media')
