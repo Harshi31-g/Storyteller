@@ -143,16 +143,31 @@ export function VideoGenerator() {
   }
 
   return (
-    <Stack gap="xl" w="100%" maw={800}>
-      <Card shadow="md" padding="xl" radius="md">
+    <Stack gap="xl" w="100%" maw={900}>
+      <Card 
+        shadow="lg" 
+        padding="xl" 
+        radius="xl"
+        style={{
+          background: 'linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)',
+          border: '1px solid #e9ecef'
+        }}
+      >
         <form onSubmit={form.onSubmit(handleGenerateVideo)}>
           <Stack gap="md">
             <TextInput
               label="Video Prompt"
-              placeholder="Describe the story you want to create..."
+              placeholder="e.g., 'The mysterious disappearance of Amelia Earhart' or 'Ancient secrets of the pyramids'"
               required
+              size="lg"
               {...form.getInputProps('prompt')}
-              leftSection={<IconSparkles size={16} />}
+              leftSection={<IconSparkles size={18} />}
+              styles={{
+                input: {
+                  fontSize: '16px',
+                  padding: '12px 16px'
+                }
+              }}
             />
             
             <Group grow>
@@ -181,11 +196,18 @@ export function VideoGenerator() {
             <Button
               type="submit"
               loading={isGenerating}
-              leftSection={<IconVideo size={16} />}
-              size="lg"
+              leftSection={<IconVideo size={18} />}
+              size="xl"
               fullWidth
+              variant="gradient"
+              gradient={{ from: 'blue', to: 'purple', deg: 45 }}
+              style={{
+                height: '60px',
+                fontSize: '18px',
+                fontWeight: 600
+              }}
             >
-              {isGenerating ? currentStep : 'Generate Video'}
+              {isGenerating ? currentStep : '✨ Generate Amazing Video'}
             </Button>
           </Stack>
         </form>
